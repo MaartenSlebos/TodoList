@@ -1,10 +1,16 @@
 import "./styles.css";
-
 import Task from './task.js'; 
+import Project from './project.js'; 
 
-const task1 = new Task('buy milk', 'go to the grocery store to buy raw milk', '15', true); 
-console.log(task1)
-task1.toggleComplete(); 
-console.log(task1)
-task1.toggleComplete(); 
-console.group(task1)
+const projects = []; 
+
+const defaultProject = new Project('Tasks'); 
+defaultProject.addTask(new Task('Welcome', 'Get started', '2025-04-20', 'medium')); 
+projects.push(defaultProject); 
+
+
+
+
+
+
+
