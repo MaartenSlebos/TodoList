@@ -2,16 +2,32 @@ import "./styles.css";
 import Task from './task.js';
 import Project from './project.js';
 import { renderProjects, addTaskButton, addProjectButton } from "./dom.js";
+import { saveToLocalStorage, loadFromLocalStorage } from "./storage.js";
 
-// Initialize projects array and create default project
-const projects = [];
-const defaultProject = new Project('Tasks');
+// Initialize projects array
+let projects = [];
 
-// Add welcome task to default project
-defaultProject.addTask(
-  new Task('Welcome', 'Get started', '2025-04-20', 'medium')
-);
-projects.push(defaultProject);
+// Expose projects array globally for access from other modules
+window.todoProjects = projects;
+
+// Try to load existing projects from localStorage
+const savedProjects = loadFromLocalStorage();
+
+// If no saved projects found, create a default project
+if (!savedProjects || savedProjects.length === 0) {
+  const defaultProject = new Project('Tasks');
+  
+  // Add welcome task to default project
+  defaultProject.addTask(
+    new Task('Welcome', 'Get started', '2025-04-20', 'medium')
+  );
+  projects.push(defaultProject);
+} else {
+  // Use the saved projects
+  projects = savedProjects;
+  // Update the global reference
+  window.todoProjects = projects;
+}
 
 // Get DOM elements
 const projectList = document.getElementById('project-list');
@@ -55,6 +71,9 @@ submitButton.addEventListener('click', () => {
     projects[selectedProjectIndex].addTask(newTask);
   }
   
+  // Save to localStorage
+  saveToLocalStorage(projects);
+  
   // Re-render project list
   renderProjects(projects, projectList);
   
@@ -89,6 +108,9 @@ projectControls.submitButton.addEventListener('click', () => {
   // Create new project and add to projects array
   const newProject = new Project(projectName);
   projects.push(newProject);
+  
+  // Save to localStorage
+  saveToLocalStorage(projects);
   
   // Re-render project list
   renderProjects(projects, projectList);

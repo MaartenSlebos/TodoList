@@ -1,3 +1,5 @@
+import { saveToLocalStorage } from "./storage.js";
+
 export function renderProjects(projects, projectListElement) {
     projectListElement.innerHTML = ''; // Clear existing content
     
@@ -33,6 +35,10 @@ export function renderProjects(projects, projectListElement) {
                 const projectIndex = projects.indexOf(project);
                 if (projectIndex !== -1) {
                     projects.splice(projectIndex, 1);
+                    
+                    // Save to localStorage
+                    saveToLocalStorage(projects);
+                    
                     // Re-render the projects
                     renderProjects(projects, projectListElement);
                 }
@@ -50,6 +56,12 @@ export function renderProjects(projects, projectListElement) {
             // Task content container (to make it clickable)
             const taskContent = document.createElement('div');
             taskContent.className = 'task-content';
+            
+            // Add completed class if task is marked as complete
+            if (task.complete) {
+                taskContent.classList.add('completed');
+            }
+            
             taskContent.textContent = `${task.title} (Due: ${task.dueDate})`;
             
             // Make task clickable to show details
@@ -70,6 +82,10 @@ export function renderProjects(projects, projectListElement) {
                 if (projectIndex !== -1) {
                     // Remove the task from the project
                     project.removeTask(task); 
+                    
+                    // Save to localStorage
+                    saveToLocalStorage(projects);
+                    
                     // Re-render the projects 
                     renderProjects(projects, projectListElement);
                 }
@@ -175,7 +191,38 @@ function showTaskDetails(modal, task, projectName) {
     // Add the appropriate class
     priorityElement.classList.add(`priority-${task.priority.toLowerCase()}`);
     
-    document.getElementById('detail-status').textContent = task.complete ? 'Completed' : 'Pending';
+    // Update status text
+    const statusElement = document.getElementById('detail-status');
+    statusElement.textContent = task.complete ? 'Completed' : 'Pending';
+    
+    // Add toggle button if not already present
+    let toggleButton = document.getElementById('toggle-status-btn');
+    if (!toggleButton) {
+        toggleButton = document.createElement('button');
+        toggleButton.id = 'toggle-status-btn';
+        toggleButton.className = 'toggle-status-btn';
+        document.querySelector('.detail-metadata').appendChild(toggleButton);
+    }
+    
+    // Update toggle button text based on current status
+    toggleButton.textContent = task.complete ? 'Mark as Pending' : 'Mark as Completed';
+    
+    // Clear previous event listeners by cloning and replacing
+    const newToggleButton = toggleButton.cloneNode(true);
+    toggleButton.parentNode.replaceChild(newToggleButton, toggleButton);
+    
+    // Add event listener to toggle completion status
+    newToggleButton.addEventListener('click', () => {
+        // Toggle task completion
+        task.toggleComplete();
+        
+        // Save changes to localStorage
+        saveToLocalStorage(window.todoProjects); // Access the global projects variable
+        
+        // Update status display
+        statusElement.textContent = task.complete ? 'Completed' : 'Pending';
+        newToggleButton.textContent = task.complete ? 'Mark as Pending' : 'Mark as Completed';
+    });
     
     // Show the modal
     modal.style.display = 'flex';
