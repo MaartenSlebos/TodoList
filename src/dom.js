@@ -67,7 +67,7 @@ export function renderProjects(projects, projectListElement) {
 }
 
 
-export function addTaskButton (app) {
+export function addTaskButton (app, projects) {
     // Add Task Button
     const addTaskButton = document.createElement('button'); 
     addTaskButton.textContent = 'Add Task'; 
@@ -120,6 +120,19 @@ export function addTaskButton (app) {
     modalContent.appendChild(dueDateLabel);
     modalContent.appendChild(dueDateInput);
 
+    // Project Selection
+    const projectLabel = document.createElement('label');
+    projectLabel.textContent = 'Project:';
+    const projectSelect = document.createElement('select');
+    projectSelect.name = 'project';
+    projectSelect.id = 'project-select';
+    projectSelect.className = 'form-select';
+    
+    // We'll populate this dropdown when the modal opens
+    
+    modalContent.appendChild(projectLabel);
+    modalContent.appendChild(projectSelect);
+
     // Priority Select
     const priorityLabel = document.createElement('label');
     priorityLabel.textContent = 'Priority:';
@@ -144,9 +157,30 @@ export function addTaskButton (app) {
     submitButton.textContent = 'Create Task';
     modalContent.appendChild(submitButton);
     
-    // Show modal on button click
+    // Show modal on button click and populate project dropdown
     addTaskButton.addEventListener('click', () => {
-        modal.style.display = 'flex'; 
+        // Clear previous options
+        projectSelect.innerHTML = '';
+        
+        // Check if there are any projects
+        if (projects.length === 0) {
+            // No projects exist, create a default one
+            const option = document.createElement('option');
+            option.value = -1; // Will create a new project
+            option.textContent = "Create new 'Tasks' project";
+            projectSelect.appendChild(option);
+        } else {
+            // Add all existing projects
+            projects.forEach((project, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = project.name;
+                projectSelect.appendChild(option);
+            });
+        }
+        
+        modal.style.display = 'flex';
+        titleInput.focus(); // Auto-focus the title input
     });
     
     // Close modal when clicking outside of modal content
@@ -157,7 +191,7 @@ export function addTaskButton (app) {
         }
     });
     
-    return { modal, submitButton };
+    return { modal, submitButton, projectSelect };
 }
 
 export function addProjectButton(app) {

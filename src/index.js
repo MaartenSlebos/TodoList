@@ -20,8 +20,8 @@ const app = document.getElementById('app');
 // Initialize UI
 renderProjects(projects, projectList);
 
-// Setup task button and modal
-const { modal, submitButton } = addTaskButton(app);
+// Setup task button and modal - pass the projects array
+const { modal, submitButton, projectSelect } = addTaskButton(app, projects);
 
 // Add project button and modal
 const projectControls = addProjectButton(app);
@@ -33,6 +33,7 @@ submitButton.addEventListener('click', () => {
   const description = modal.querySelector('textarea[name="description"]').value;
   const dueDate = modal.querySelector('input[name="dueDate"]').value;
   const priority = modal.querySelector('select[name="priority"]').value;
+  const selectedProjectIndex = parseInt(projectSelect.value);
 
   // Validate
   if (!title || !dueDate) {
@@ -40,16 +41,19 @@ submitButton.addEventListener('click', () => {
     return;
   }
 
-  // Check if there are any projects
-  if (projects.length === 0) {
-    // No projects exist, create a default one
-    const newDefaultProject = new Project('Tasks');
-    projects.push(newDefaultProject);
-  }
-  
-  // Create and add task to the first available project
+  // Create the task
   const newTask = new Task(title, description, dueDate, priority);
-  projects[0].addTask(newTask);
+  
+  // Add task to the selected project
+  if (selectedProjectIndex === -1 || projects.length === 0) {
+    // Create a new default project if needed
+    const newDefaultProject = new Project('Tasks');
+    newDefaultProject.addTask(newTask);
+    projects.push(newDefaultProject);
+  } else {
+    // Add to the selected project
+    projects[selectedProjectIndex].addTask(newTask);
+  }
   
   // Re-render project list
   renderProjects(projects, projectList);
