@@ -1,5 +1,9 @@
 export function renderProjects(projects, projectListElement) {
     projectListElement.innerHTML = ''; // Clear existing content
+    
+    // Create the task details modal once
+    const taskDetailsModal = createTaskDetailsModal();
+    
     projects.forEach(project => {
         // Project container with name and delete button
         const li = document.createElement('li');
@@ -42,12 +46,25 @@ export function renderProjects(projects, projectListElement) {
         const taskUl = document.createElement('ul');
         project.tasks.forEach(task => {
             const taskLi = document.createElement('li');
-            taskLi.textContent = `${task.title} (Due: ${task.dueDate})`;
+            
+            // Task content container (to make it clickable)
+            const taskContent = document.createElement('div');
+            taskContent.className = 'task-content';
+            taskContent.textContent = `${task.title} (Due: ${task.dueDate})`;
+            
+            // Make task clickable to show details
+            taskContent.addEventListener('click', () => {
+                showTaskDetails(taskDetailsModal, task, project.name);
+            });
+            
+            taskLi.appendChild(taskContent);
 
             // Remove Task Button
             const removeButton = document.createElement('button');
             removeButton.textContent = 'Remove';
-            removeButton.addEventListener('click', () => {
+            removeButton.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent triggering the task click
+                
                 // Find the index of the project in the projects array
                 const projectIndex = projects.indexOf(project);
                 if (projectIndex !== -1) {
@@ -66,6 +83,103 @@ export function renderProjects(projects, projectListElement) {
     });
 }
 
+// Create a modal for displaying task details
+function createTaskDetailsModal() {
+    // Check if modal already exists
+    let modal = document.getElementById('task-details-modal');
+    if (modal) {
+        return modal;
+    }
+    
+    // Create modal container
+    modal = document.createElement('div');
+    modal.id = 'task-details-modal';
+    modal.className = 'modal';
+    modal.style.display = 'none';
+    
+    // Modal content
+    const modalContent = document.createElement('div');
+    modalContent.className = 'modal-content';
+    modal.appendChild(modalContent);
+    
+    // Close button
+    const closeButton = document.createElement('button');
+    closeButton.className = 'close-modal';
+    closeButton.innerHTML = '&times;';
+    closeButton.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+    modalContent.appendChild(closeButton);
+    
+    // Task details elements
+    const taskTitle = document.createElement('h2');
+    taskTitle.id = 'detail-title';
+    modalContent.appendChild(taskTitle);
+    
+    const projectName = document.createElement('p');
+    projectName.className = 'detail-project';
+    modalContent.appendChild(projectName);
+    
+    const taskDescription = document.createElement('div');
+    taskDescription.className = 'detail-description';
+    const descriptionTitle = document.createElement('h3');
+    descriptionTitle.textContent = 'Description:';
+    taskDescription.appendChild(descriptionTitle);
+    const descriptionContent = document.createElement('p');
+    descriptionContent.id = 'detail-description-content';
+    taskDescription.appendChild(descriptionContent);
+    modalContent.appendChild(taskDescription);
+    
+    const taskDetails = document.createElement('div');
+    taskDetails.className = 'detail-metadata';
+    
+    const dueDate = document.createElement('p');
+    dueDate.innerHTML = '<strong>Due Date:</strong> <span id="detail-due-date"></span>';
+    taskDetails.appendChild(dueDate);
+    
+    const priority = document.createElement('p');
+    priority.innerHTML = '<strong>Priority:</strong> <span id="detail-priority"></span>';
+    taskDetails.appendChild(priority);
+    
+    const status = document.createElement('p');
+    status.innerHTML = '<strong>Status:</strong> <span id="detail-status"></span>';
+    taskDetails.appendChild(status);
+    
+    modalContent.appendChild(taskDetails);
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+    
+    document.body.appendChild(modal);
+    return modal;
+}
+
+// Function to display task details in the modal
+function showTaskDetails(modal, task, projectName) {
+    // Populate task details
+    document.getElementById('detail-title').textContent = task.title;
+    document.querySelector('.detail-project').textContent = `Project: ${projectName}`;
+    document.getElementById('detail-description-content').textContent = task.description || 'No description provided';
+    document.getElementById('detail-due-date').textContent = task.dueDate;
+    
+    // Set priority with appropriate class for styling
+    const priorityElement = document.getElementById('detail-priority');
+    priorityElement.textContent = task.priority.charAt(0).toUpperCase() + task.priority.slice(1);
+    
+    // Remove any existing priority classes
+    priorityElement.classList.remove('priority-low', 'priority-medium', 'priority-high');
+    // Add the appropriate class
+    priorityElement.classList.add(`priority-${task.priority.toLowerCase()}`);
+    
+    document.getElementById('detail-status').textContent = task.complete ? 'Completed' : 'Pending';
+    
+    // Show the modal
+    modal.style.display = 'flex';
+}
 
 export function addTaskButton (app, projects) {
     // Add Task Button
