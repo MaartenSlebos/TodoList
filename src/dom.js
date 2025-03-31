@@ -1,9 +1,42 @@
 export function renderProjects(projects, projectListElement) {
     projectListElement.innerHTML = ''; // Clear existing content
     projects.forEach(project => {
-        // Project name
+        // Project container with name and delete button
         const li = document.createElement('li');
-        li.textContent = project.name;
+        
+        // Project header with name and delete button
+        const projectHeader = document.createElement('div');
+        projectHeader.className = 'project-header';
+        
+        // Project name
+        const projectName = document.createElement('span');
+        projectName.textContent = project.name;
+        projectHeader.appendChild(projectName);
+        
+        // Delete Project Button - now available for all projects
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete Project';
+        deleteButton.className = 'delete-project-btn';
+        deleteButton.addEventListener('click', () => {
+            // Add warning if it's the last project
+            let message = `Are you sure you want to delete the project "${project.name}"?`;
+            if (projects.length === 1) {
+                message += "\n\nWarning: This is your last project. Deleting it will leave you with no projects.";
+            }
+            
+            if (confirm(message)) {
+                // Find the index and remove the project
+                const projectIndex = projects.indexOf(project);
+                if (projectIndex !== -1) {
+                    projects.splice(projectIndex, 1);
+                    // Re-render the projects
+                    renderProjects(projects, projectListElement);
+                }
+            }
+        });
+        projectHeader.appendChild(deleteButton);
+        
+        li.appendChild(projectHeader);
         
         // Tasks list under the project
         const taskUl = document.createElement('ul');
@@ -43,17 +76,22 @@ export function addTaskButton (app) {
     // Modal 
     const modal = document.createElement('div');
     modal.id = 'task-modal'; 
-    modal.style.display = 'none'; 
-    modal.style.position = 'fixed'; 
-    modal.style.top = '50%'; 
-    modal.style.left = '50%'; 
-    modal.style.transform = 'translate(-50%, -50%)'; 
-    modal.style.backgroundColor = 'white'; 
-    modal.style.padding = '20px'; 
-    modal.style.border = '1px solid black'; 
     document.body.appendChild(modal);
 
-    // Modal Content 
+    // Modal Content Container
+    const modalContent = document.createElement('div');
+    modalContent.className = 'modal-content';
+    modal.appendChild(modalContent);
+    
+    // Close button
+    const closeButton = document.createElement('button');
+    closeButton.className = 'close-modal';
+    closeButton.innerHTML = '&times;';
+    closeButton.addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+    modalContent.appendChild(closeButton);
+    
     // Title Input
     const titleLabel = document.createElement('label'); 
     titleLabel.textContent = 'Title:'; 
@@ -61,8 +99,8 @@ export function addTaskButton (app) {
     titleInput.type = 'text'; 
     titleInput.name = 'title'; 
     titleInput.required = true; 
-    modal.appendChild(titleLabel); 
-    modal.appendChild(titleInput); 
+    modalContent.appendChild(titleLabel); 
+    modalContent.appendChild(titleInput); 
 
     // Description Input
     const descriptionLabel = document.createElement('label'); 
@@ -70,8 +108,8 @@ export function addTaskButton (app) {
     const descriptionInput = document.createElement('textarea'); 
     descriptionInput.name = 'description'; 
     descriptionInput.required = true; 
-    modal.appendChild(descriptionLabel); 
-    modal.appendChild(descriptionInput); 
+    modalContent.appendChild(descriptionLabel); 
+    modalContent.appendChild(descriptionInput); 
 
     // Due Date Input
     const dueDateLabel = document.createElement('label'); 
@@ -79,29 +117,104 @@ export function addTaskButton (app) {
     const dueDateInput = document.createElement('input');
     dueDateInput.type = 'date';
     dueDateInput.name = 'dueDate';
-    modal.appendChild(dueDateLabel);
-    modal.appendChild(dueDateInput);
+    modalContent.appendChild(dueDateLabel);
+    modalContent.appendChild(dueDateInput);
 
-    // Priority Input
+    // Priority Select
     const priorityLabel = document.createElement('label');
     priorityLabel.textContent = 'Priority:';
-    const priorityInput = document.createElement('input');
-    priorityInput.type = 'text';
-    priorityInput.name = 'priority';
-    modal.appendChild(priorityLabel);
-    modal.appendChild(priorityInput);
+    const prioritySelect = document.createElement('select');
+    prioritySelect.name = 'priority';
+    
+    // Add priority options
+    const priorities = ['low', 'medium', 'high'];
+    priorities.forEach(priority => {
+        const option = document.createElement('option');
+        option.value = priority;
+        option.textContent = priority.charAt(0).toUpperCase() + priority.slice(1);
+        prioritySelect.appendChild(option);
+    });
+    
+    modalContent.appendChild(priorityLabel);
+    modalContent.appendChild(prioritySelect);
 
     // Submit Button
     const submitButton = document.createElement('button');
-    submitButton.type = 'button'; // Changed to button, not submit
+    submitButton.type = 'button';
     submitButton.textContent = 'Create Task';
-    modal.appendChild(submitButton);
+    modalContent.appendChild(submitButton);
     
-
     // Show modal on button click
     addTaskButton.addEventListener('click', () => {
-        modal.style.display = 'block'; 
+        modal.style.display = 'flex'; 
     });
-
     
+    // Close modal when clicking outside of modal content
+    modal.addEventListener('click', (event) => {
+        // Check if the click was directly on the modal background (not its children)
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+    
+    return { modal, submitButton };
+}
+
+export function addProjectButton(app) {
+    // Create Add Project Button
+    const addProjectButton = document.createElement('button');
+    addProjectButton.textContent = 'Add Project';
+    addProjectButton.className = 'add-project-btn';
+    document.body.insertBefore(addProjectButton, app);
+    
+    // Create Project Modal
+    const projectModal = document.createElement('div');
+    projectModal.id = 'project-modal';
+    projectModal.style.display = 'none';
+    document.body.appendChild(projectModal);
+    
+    // Modal Content Container
+    const modalContent = document.createElement('div');
+    modalContent.className = 'modal-content';
+    projectModal.appendChild(modalContent);
+    
+    // Close button
+    const closeButton = document.createElement('button');
+    closeButton.className = 'close-modal';
+    closeButton.innerHTML = '&times;';
+    closeButton.addEventListener('click', () => {
+        projectModal.style.display = 'none';
+    });
+    modalContent.appendChild(closeButton);
+    
+    // Project Name Input
+    const nameLabel = document.createElement('label');
+    nameLabel.textContent = 'Project Name:';
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.name = 'projectName';
+    nameInput.required = true;
+    modalContent.appendChild(nameLabel);
+    modalContent.appendChild(nameInput);
+    
+    // Submit Button
+    const submitButton = document.createElement('button');
+    submitButton.type = 'button';
+    submitButton.textContent = 'Create Project';
+    modalContent.appendChild(submitButton);
+    
+    // Show modal on button click
+    addProjectButton.addEventListener('click', () => {
+        projectModal.style.display = 'flex';
+        nameInput.focus(); // Auto-focus the name input
+    });
+    
+    // Close modal when clicking outside
+    projectModal.addEventListener('click', (event) => {
+        if (event.target === projectModal) {
+            projectModal.style.display = 'none';
+        }
+    });
+    
+    return { modal: projectModal, submitButton, nameInput };
 }

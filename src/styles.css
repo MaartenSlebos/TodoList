@@ -1,0 +1,209 @@
+/* General styles */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 20px;
+}
+
+/* App container */
+#app {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+h1, h2 {
+  color: #2c3e50;
+}
+
+/* Project list */
+#project-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+#project-list li {
+  background-color: #f5f5f5;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+/* Project header styling */
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.project-header span {
+  font-weight: bold;
+  font-size: 1.1em;
+  color: #2c3e50;
+}
+
+/* Delete project button */
+.delete-project-btn {
+  background-color: #e74c3c;
+  color: white;
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+#project-list ul {
+  list-style-type: none;
+  padding: 0;
+  margin-top: 10px;
+}
+
+#project-list ul li {
+  background-color: white;
+  border-left: 3px solid #3498db;
+  margin-bottom: 5px;
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: normal;
+}
+
+/* Buttons */
+button {
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+/* Action Buttons */
+button:first-of-type, .add-project-btn {
+  background-color: #3498db;
+  color: white;
+  font-weight: bold;
+  padding: 10px 20px;
+  margin-bottom: 20px;
+}
+
+/* Add Project button specific */
+.add-project-btn {
+  background-color: #9b59b6;
+  margin-left: 10px;
+}
+
+/* Remove Task Button */
+#project-list button {
+  background-color: #e74c3c;
+  color: white;
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+/* Modal styles - shared between task and project modals */
+#task-modal, #project-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Modal content */
+.modal-content {
+  background-color: white;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  padding: 25px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Shared input styles */
+#task-modal label, #project-modal label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #2c3e50;
+}
+
+#task-modal input,
+#task-modal textarea,
+#task-modal select,
+#project-modal input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+}
+
+#task-modal input:focus,
+#task-modal textarea:focus,
+#task-modal select:focus,
+#project-modal input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+#task-modal textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* Submit button */
+#task-modal button:last-child {
+  background-color: #2ecc71;
+  color: white;
+  align-self: flex-end;
+  padding: 10px 20px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+#project-modal button:last-child {
+  background-color: #9b59b6;
+  color: white;
+  align-self: flex-end;
+  padding: 10px 20px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+/* Close button */
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none !important;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 0 !important;
+  margin: 0 !important;
+}
