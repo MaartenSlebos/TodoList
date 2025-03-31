@@ -2,7 +2,7 @@ class Task {
     constructor(title, description, dueDate, priority) {
         this.title = title; 
         this.description = description; 
-        this.dueDate = dueDate; // Expecting "YYYY-MM-DD" like "2025-04-15"
+        this.dueDate = dueDate; // Expecting "DD-MM-YYYY" like "2025-04-15"
         this.priority = priority; 
         this.complete = false; 
     }
