@@ -229,10 +229,8 @@ function showTaskDetails(modal, task, projectName) {
 }
 
 export function addTaskButton (app, projects) {
-    // Add Task Button
-    const addTaskButton = document.createElement('button'); 
-    addTaskButton.textContent = 'Add Task'; 
-    document.body.insertBefore(addTaskButton, app); 
+    // Get the existing Add Task Button
+    const addTaskButton = document.getElementById('add-task-btn'); 
 
     // Modal 
     const modal = document.createElement('div');
@@ -356,11 +354,9 @@ export function addTaskButton (app, projects) {
 }
 
 export function addProjectButton(app) {
-    // Create Add Project Button
-    const addProjectButton = document.createElement('button');
-    addProjectButton.textContent = 'Add Project';
+    // Get the existing Add Project Button
+    const addProjectButton = document.getElementById('add-project-btn');
     addProjectButton.className = 'add-project-btn';
-    document.body.insertBefore(addProjectButton, app);
     
     // Create Project Modal
     const projectModal = document.createElement('div');
