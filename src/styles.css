@@ -291,12 +291,10 @@ select option {
   color: #3498db;
 }
 
-/* Add a subtle icon to indicate clickability */
-.task-content::before {
-  content: "👁️";
-  margin-right: 8px;
-  font-size: 14px;
-  opacity: 0.5;
+/* Style for completed tasks */
+.task-content.completed {
+  text-decoration: line-through;
+  opacity: 0.7;
 }
 
 /* Task details modal */
@@ -401,10 +399,4 @@ select option {
 
 .toggle-status-btn:hover {
   background-color: #2980b9;
-}
-
-/* Style for completed tasks */
-.task-content.completed {
-  text-decoration: line-through;
-  opacity: 0.7;
 }
